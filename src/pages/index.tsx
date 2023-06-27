@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { CiSearch } from "react-icons/ci";
-import { HiChevronDown } from 'react-icons/hi'
+import { HiChevronDown } from "react-icons/hi";
 import MainLayout from "../layouts/MainLayout";
+import Modal from "../components/Modal";
+import { GlobalContext } from "../contexts/GlobalContextProvider";
 
 const HomePage = () => {
+  const { isWriteModalOpen, setIsWriteModalOpen } = useContext(GlobalContext);
+
   return (
     <MainLayout>
-
       <section className="grid  grid-cols-12 ">
         <main className="col-span-8 h-full w-full border-r border-gray-300 px-24">
           <div className="flex w-full flex-col space-y-4 py-10 ">
@@ -158,6 +161,14 @@ const HomePage = () => {
           </div>
         </aside>
       </section>
+      <Modal
+        isOpen={isWriteModalOpen}
+        onClose={() => setIsWriteModalOpen(false)}
+      >
+        <form onSubmit={(e) => e.preventDefault()}>
+          here is our form!
+        </form>
+      </Modal>
     </MainLayout>
   );
 };
