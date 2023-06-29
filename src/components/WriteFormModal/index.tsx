@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "../../utils/trpc";
+import toast from "react-hot-toast";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 type WriteFormType = {
   title: string;
@@ -24,24 +26,35 @@ const WriteFormModal = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<WriteFormType>({
     resolver: zodResolver(writeFormSchema),
   });
-  
+
+  const postRoute = trpc.useContext().post
+
   const createPost = trpc.post.createPost.useMutation({
-    onSuccess: () =>{
-      console.log('post created successfully!')
-    }
-  })
+    onSuccess: () => {
+      toast.success("post created successfully!");
+      setIsWriteModalOpen(false);
+      reset();
+      postRoute.getPosts.invalidate()
+    },
+  });
   const onSubmit = (data: WriteFormType) => {
-    createPost.mutate(data)
+    createPost.mutate(data);
   };
   return (
     <Modal isOpen={isWriteModalOpen} onClose={() => setIsWriteModalOpen(false)}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col items-center justify-center space-y-4"
+        className="relative flex flex-col items-center justify-center space-y-4"
       >
+        {createPost.isLoading && (
+          <div className="absolute flex h-full w-full items-center justify-center">
+            <AiOutlineLoading3Quarters className="animate-spin" />
+          </div>
+        )}
         <input
           type="text"
           id="title"

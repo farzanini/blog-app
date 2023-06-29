@@ -1,6 +1,6 @@
 import slugify from "slugify";
 import { writeFormSchema } from "../../../components/WriteFormModal";
-import { protectedProcedure, router } from "../trpc";
+import { publicProcedure, protectedProcedure, router } from "../trpc";
 
 export const postRouter = router({
   createPost: protectedProcedure
@@ -25,4 +25,20 @@ export const postRouter = router({
         });
       }
     ),
+  getPosts: publicProcedure.query(async ({ ctx: { prisma } }) => {
+    const posts = await prisma.post.findMany({
+      orderBy:{
+        createdAt: 'desc'
+      },
+      include:{
+        author:{
+          select:{
+            name:true,
+            image:true,
+          }
+        }
+      }    
+    });
+    return posts;
+  }),
 });
