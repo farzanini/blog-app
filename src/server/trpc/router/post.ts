@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import { writeFormSchema } from "../../../components/WriteFormModal";
 import { publicProcedure, protectedProcedure, router } from "../trpc";
+import { z } from "zod";
 
 export const postRouter = router({
   createPost: protectedProcedure
@@ -27,18 +28,34 @@ export const postRouter = router({
     ),
   getPosts: publicProcedure.query(async ({ ctx: { prisma } }) => {
     const posts = await prisma.post.findMany({
-      orderBy:{
-        createdAt: 'desc'
+      orderBy: {
+        createdAt: "desc",
       },
-      include:{
-        author:{
-          select:{
-            name:true,
-            image:true,
-          }
-        }
-      }    
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
+          },
+        },
+      },
     });
     return posts;
   }),
+
+  getPost: publicProcedure
+    .input(
+      z.object({
+        slug: z.string(),
+      })
+    )
+    .query(async ({ ctx: { prisma }, input: { slug } }) => {
+      const post = await prisma.post.findUnique({
+        where: {
+          slug,
+        },
+      });
+
+      return post;
+    }),
 });

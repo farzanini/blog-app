@@ -5,6 +5,7 @@ import { FiEdit } from "react-icons/fi";
 import { signIn, useSession, signOut } from "next-auth/react";
 import { HiLogout } from "react-icons/hi";
 import { GlobalContext } from "../../contexts/GlobalContextProvider";
+import Link from "next/link";
 
 const Header = () => {
   const { status } = useSession();
@@ -15,7 +16,7 @@ const Header = () => {
       <div>
         <IoReorderThreeOutline className="text-2xl text-gray-600" />
       </div>
-      <div className="text-xl font-thin">Ultimate Blog App</div>
+      <Link href={'/'} className="text-xl font-thin select-none cursor-pointer">Ultimate Blog App</Link>
       {status === "authenticated" ? (
         <div className="flex items-center space-x-4">
           <div>
