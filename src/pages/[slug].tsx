@@ -1,11 +1,15 @@
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import MainLayout from '../layouts/MainLayout'
 import { trpc } from '../utils/trpc'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
+import {FcLike, FcLikePlaceholder} from 'react-icons/fc'
+import { BsChat } from 'react-icons/bs'
 
 const PostPage = () => {
     const router = useRouter()
+
+    const postRoute = trpc.useContext().post
 
     const getPost = trpc.post.getPost.useQuery(
       {
@@ -15,6 +19,21 @@ const PostPage = () => {
         enabled: Boolean(router.query.slug),
       }
     );
+
+    const invalidateCurrentPostPage = useCallback(() => {
+      postRoute.getPost.invalidate({ slug: router.query.slug as string });
+    }, [postRoute.getPost, router.query.slug]);
+
+    const likePost = trpc.post.likePost.useMutation({
+      onSuccess: ()=>{
+        invalidateCurrentPostPage()
+      }
+    })
+
+
+    const disLikePost = trpc.post.disLikePost.useMutation({
+      onSuccess: () => invalidateCurrentPostPage(),
+    });
   return (
     <MainLayout>
       {getPost.isLoading && (
@@ -25,11 +44,43 @@ const PostPage = () => {
           <div>Loading...</div>
         </div>
       )}
+      {getPost.isSuccess && (
+        <div className="fixed bottom-10 flex w-full items-center justify-center">
+          <div className="group flex items-center space-x-4 rounded-full border border-gray-400 bg-white px-6 py-3 transition duration-300 hover:border-gray-900">
+            <div className="border-r pr-4 transition duration-300 group-hover:border-gray-900">
+              {getPost.data?.likes && getPost.data?.likes.length > 0 ? (
+                <FcLike
+                  onClick={() =>
+                    getPost.data?.id &&
+                    disLikePost.mutate({
+                      postId: getPost.data?.id,
+                    })
+                  }
+                  className="cursor-pointer text-xl"
+                />
+              ) : (
+                <FcLikePlaceholder
+                  onClick={() =>
+                    getPost.data?.id &&
+                    likePost.mutate({
+                      postId: getPost.data?.id,
+                    })
+                  }
+                  className="cursor-pointer text-xl"
+                />
+              )}
+            </div>
+            <div>
+              <BsChat className="text-base" />
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex h-full w-full flex-col items-center justify-center p-10">
         <div className="flex w-full max-w-screen-lg flex-col space-y-6">
           <div className="relative h-[60vh] w-full rounded-xl bg-gray-300 shadow-lg">
             <div className="absolute flex h-full w-full items-center justify-center ">
-              <div className="rounded-xl bg-black text-white text-3xl bg-opacity-50 p-4">
+              <div className="rounded-xl bg-black bg-opacity-50 p-4 text-3xl text-white">
                 {getPost.data?.title}
               </div>
             </div>
