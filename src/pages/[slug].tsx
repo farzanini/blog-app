@@ -1,41 +1,50 @@
-import { useRouter } from 'next/router'
-import React, { useCallback, useState } from 'react'
-import MainLayout from '../layouts/MainLayout'
-import { trpc } from '../utils/trpc'
-import { AiOutlineLoading3Quarters } from 'react-icons/ai'
-import {FcLike, FcLikePlaceholder} from 'react-icons/fc'
-import { BsChat } from 'react-icons/bs'
-
+import { useRouter } from "next/router";
+import React, { Fragment, useCallback, useState } from "react";
+import MainLayout from "../layouts/MainLayout";
+import { trpc } from "../utils/trpc";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FcLike, FcLikePlaceholder } from "react-icons/fc";
+import { BsChat } from "react-icons/bs";
+import CommentSidebar from "../components/CommentSidebar";
 const PostPage = () => {
-    const router = useRouter()
+  const router = useRouter();
 
-    const postRoute = trpc.useContext().post
+  const postRoute = trpc.useContext().post;
 
-    const getPost = trpc.post.getPost.useQuery(
-      {
-        slug: router.query.slug as string,
-      },
-      {
-        enabled: Boolean(router.query.slug),
-      }
-    );
+  const getPost = trpc.post.getPost.useQuery(
+    {
+      slug: router.query.slug as string,
+    },
+    {
+      enabled: Boolean(router.query.slug),
+    }
+  );
 
-    const invalidateCurrentPostPage = useCallback(() => {
-      postRoute.getPost.invalidate({ slug: router.query.slug as string });
-    }, [postRoute.getPost, router.query.slug]);
+  const invalidateCurrentPostPage = useCallback(() => {
+    postRoute.getPost.invalidate({ slug: router.query.slug as string });
+  }, [postRoute.getPost, router.query.slug]);
 
-    const likePost = trpc.post.likePost.useMutation({
-      onSuccess: ()=>{
-        invalidateCurrentPostPage()
-      }
-    })
+  const likePost = trpc.post.likePost.useMutation({
+    onSuccess: () => {
+      invalidateCurrentPostPage();
+    },
+  });
 
+  const disLikePost = trpc.post.disLikePost.useMutation({
+    onSuccess: () => invalidateCurrentPostPage(),
+  });
 
-    const disLikePost = trpc.post.disLikePost.useMutation({
-      onSuccess: () => invalidateCurrentPostPage(),
-    });
+  const [showCommentSidebar, setShowCommentSidebar] = useState(false);
+
   return (
     <MainLayout>
+      {getPost.data?.id && (
+        <CommentSidebar
+          showCommentSidebar={showCommentSidebar}
+          setShowCommentSidebar={setShowCommentSidebar}
+          postId={getPost.data?.id}
+        />
+      )}
       {getPost.isLoading && (
         <div className="flex h-full w-full items-center justify-center space-x-4">
           <div>
@@ -46,7 +55,7 @@ const PostPage = () => {
       )}
       {getPost.isSuccess && (
         <div className="fixed bottom-10 flex w-full items-center justify-center">
-          <div className="group flex items-center space-x-4 rounded-full border border-gray-400 bg-white px-6 py-3 transition duration-300 hover:border-gray-900">
+          <div className="group flex items-center space-x-4 rounded-full border border-gray-400 bg-white px-6 py-3 shadow-xl transition duration-300 hover:border-gray-900">
             <div className="border-r pr-4 transition duration-300 group-hover:border-gray-900">
               {getPost.data?.likes && getPost.data?.likes.length > 0 ? (
                 <FcLike
@@ -71,7 +80,10 @@ const PostPage = () => {
               )}
             </div>
             <div>
-              <BsChat className="text-base" />
+              <BsChat
+                className="cursor-pointer text-base"
+                onClick={() => setShowCommentSidebar(true)}
+              />
             </div>
           </div>
         </div>
@@ -93,6 +105,6 @@ const PostPage = () => {
       </div>
     </MainLayout>
   );
-}
+};
 
-export default PostPage
+export default PostPage;
