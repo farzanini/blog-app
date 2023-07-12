@@ -31,14 +31,6 @@ export const postRouter = router({
       orderBy: {
         createdAt: "desc",
       },
-      // include: {
-      //   author: {
-      //     select: {
-      //       name: true,
-      //       image: true,
-      //     },
-      //   },
-      // },
       select: {
         id: true,
         slug: true,
@@ -49,6 +41,7 @@ export const postRouter = router({
           select: {
             name: true,
             image: true,
+            username: true,
           },
         },
         bookmarks: session?.user?.id
@@ -209,4 +202,37 @@ export const postRouter = router({
       });
       return comments;
     }),
+
+  getReadingList: protectedProcedure.query(
+    async ({ ctx: { prisma, session } }) => {
+      const allBookmarks = await prisma.bookmark.findMany({
+        where: {
+          userId: session.user.id,
+        },
+        take: 4,
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          post: {
+            select: {
+              title: true,
+              description: true,
+              author: {
+                select: {
+                  name: true,
+                  image: true,
+                },
+              },
+              createdAt: true,
+              slug: true,
+            },
+          },
+
+          id: true,
+        },
+      });
+      return allBookmarks;
+    }
+  ),
 });

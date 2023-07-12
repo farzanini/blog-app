@@ -33,20 +33,20 @@ const CommentSidebar = ({
     register,
     handleSubmit,
     formState: { isValid },
-    reset 
+    reset,
   } = useForm<CommentFormType>({
     resolver: zodResolver(commentFormSchema),
   });
 
-  const postRoute = trpc.useContext().post
+  const postRoute = trpc.useContext().post;
 
   const submitComment = trpc.post.submitComment.useMutation({
     onSuccess: () => {
       toast.success("🥳");
       postRoute.getComments.invalidate({
         postId,
-      })
-      reset()
+      });
+      reset();
     },
     onError: (error) => {
       toast.error(error.message);

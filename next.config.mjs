@@ -13,8 +13,11 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
-  images:{
-    domains:['lh3.googleusercontent.com']
-  }
+  images: {
+    domains: [
+      "lh3.googleusercontent.com",
+      "https://ojashwzrlsxhtzphsnve.supabase.co",
+    ],
+  },
 };
 export default config;

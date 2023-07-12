@@ -1,6 +1,11 @@
 import React from "react";
+import { trpc } from "../../utils/trpc";
+import dayjs from "dayjs";
+import Link from "next/link";
 
 const SideSection = () => {
+  const readingList = trpc.post.getReadingList.useQuery();
+
   return (
     <aside className="col-span-4  w-full space-y-4 p-6">
       <div>
@@ -30,25 +35,29 @@ const SideSection = () => {
       <div className="sticky top-20 ">
         <h3 className="my-6 text-lg font-semibold">Your reading list</h3>
         <div className="flex flex-col space-y-8">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="group flex items-center space-x-6">
-              <div className="aspect-square h-full w-2/5 rounded-xl bg-gray-300"></div>
-              <div className="flex w-3/5 flex-col space-y-2">
-                <div className="text-lg font-semibold decoration-indigo-600 group-hover:underline">
-                  Lorem ipsum dolor sit amet consectetur.
+          {readingList.data &&
+            readingList.data.map((bookmark) => (
+              <Link
+                href={`/${bookmark.post.slug}`}
+                key={bookmark.id}
+                className="group flex items-center space-x-6"
+              >
+                <div className="aspect-square h-full w-2/5 rounded-xl bg-gray-300"></div>
+                <div className="flex w-3/5 flex-col space-y-2">
+                  <div className="text-lg font-semibold decoration-indigo-600 group-hover:underline">
+                    {bookmark.post.title}
+                  </div>
+                  <div className="truncate">{bookmark.post.description}</div>
+                  <div className="flex w-full items-center space-x-4">
+                    <div className="h-10 w-10 rounded-full bg-gray-300"></div>
+                    <div> {bookmark.post.author.name} &#x2022; </div>
+                    <div>
+                      {dayjs(bookmark.post.createdAt).format("DD/MM/YYYY")}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Delectus alias voluptatibus nulla possimus quod?
-                </div>
-                <div className="flex w-full items-center space-x-4">
-                  <div className="h-10 w-10 rounded-full bg-gray-300"></div>
-                  <div> Farzan Hosseini &#x2022; </div>
-                  <div>22 Dec. 2022</div>
-                </div>
-              </div>
-            </div>
-          ))}
+              </Link>
+            ))}
         </div>
       </div>
     </aside>
