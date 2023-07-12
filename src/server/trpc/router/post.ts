@@ -5,11 +5,23 @@ import { z } from "zod";
 
 export const postRouter = router({
   createPost: protectedProcedure
-    .input(writeFormSchema)
+    .input(
+      writeFormSchema.and(
+        z.object({
+          tagsIds: z
+            .array(
+              z.object({
+                id: z.string(),
+              })
+            )
+            .optional(),
+        })
+      )
+    )
     .mutation(
       async ({
         ctx: { prisma, session },
-        input: { title, description, text },
+        input: { title, description, text, tagsIds },
       }) => {
         await prisma.post.create({
           data: {
@@ -21,6 +33,9 @@ export const postRouter = router({
               connect: {
                 id: session.user.id,
               },
+            },
+            tags: {
+              connect: tagsIds,
             },
           },
         });
@@ -51,7 +66,15 @@ export const postRouter = router({
               },
             }
           : false,
+        tags: {
+          select: {
+            name: true,
+            id: true,
+            slug: true,
+          },
+        },
       },
+      take: 10,
     });
     return posts;
   }),

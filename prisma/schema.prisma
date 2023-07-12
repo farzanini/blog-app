@@ -87,7 +87,7 @@ model Post {
 
 model Tag {
   id          String  @id @default(cuid())
-  name        String
+  name        String  @unique
   description String?
   slug        String
   posts       Post[]
