@@ -2,10 +2,17 @@ import React from "react";
 import { trpc } from "../../utils/trpc";
 import dayjs from "dayjs";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 const SideSection = () => {
   const readingList = trpc.post.getReadingList.useQuery();
   const suggestions = trpc.user.getSuggestions.useQuery();
+
+  const followUser = trpc.user.followUser.useMutation({
+    onSuccess: () => {
+      toast.success("user followed");
+    },
+  });
 
   return (
     <aside className="col-span-4  w-full space-y-4 p-6">
@@ -28,7 +35,14 @@ const SideSection = () => {
                   <div className="text-xs">{user.username}</div>
                 </div>
                 <div>
-                  <button className="flex items-center space-x-3 rounded border border-gray-400 px-4  py-2.5 transition hover:border-gray-900 hover:text-gray-900">
+                  <button
+                    onClick={() =>
+                      followUser.mutate({
+                        followingUserId: user.id,
+                      })
+                    }
+                    className="flex items-center space-x-3 rounded border border-gray-400 px-4  py-2.5 transition hover:border-gray-900 hover:text-gray-900"
+                  >
                     Follow
                   </button>
                 </div>

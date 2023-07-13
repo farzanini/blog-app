@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 
 import { createClient } from "@supabase/supabase-js";
 import { env } from "../../env/client.mjs";
+import Modal from "../../components/Modal";
 
 // Create a single supabase client for interacting with your database
 const supabase = createClient(
@@ -81,8 +82,112 @@ function UserProfilePage() {
       };
     }
   };
+
+  const [isFollowModalOpen, setIsFollowModalOpen] = useState({
+    isOpen: false,
+    modalType: "followers",
+  });
+
+  const followers = trpc.user.getAllFollowers.useQuery(
+    {
+      userId: userProfile?.data?.id as string,
+    },
+    {
+      enabled: Boolean(userProfile?.data?.id),
+    }
+  );
+  const followings = trpc.user.getAllFollowing.useQuery(
+    {
+      userId: userProfile?.data?.id as string,
+    },
+    {
+      enabled: Boolean(userProfile?.data?.id),
+    }
+  );
+
+  const followUser = trpc.user.followUser.useMutation({
+    onSuccess: () => {
+      userRoute.getAllFollowers.invalidate();
+      userRoute.getAllFollowing.invalidate();
+      userRoute.getUserProfile.invalidate();
+      toast.success("user followed");
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+
+  const unfollowUser = trpc.user.unfollowUser.useMutation({
+    onSuccess: () => {
+      userRoute.getAllFollowers.invalidate();
+      userRoute.getAllFollowing.invalidate();
+      userRoute.getUserProfile.invalidate();
+      toast.success("user unfollowed");
+    },
+  });
   return (
     <MainLayout>
+      {followers.isSuccess && followings.isSuccess && (
+        <Modal
+          isOpen={isFollowModalOpen.isOpen}
+          onClose={() =>
+            setIsFollowModalOpen((prev) => ({ ...prev, isOpen: false }))
+          }
+        >
+          <div className="flex w-full max-w-lg flex-col items-center justify-center space-y-4">
+            {isFollowModalOpen.modalType === "followers" &&
+              followers.data?.followedBy.map((user) => (
+                <div className="flex w-full flex-col justify-center">
+                  <h3 className="my-2 p-2 text-xl">Followers</h3>
+                  <div
+                    key={user.id}
+                    className="my-1 flex w-full items-center justify-between rounded-xl bg-gray-200 px-4 py-2"
+                  >
+                    <div>{user.name}</div>
+                    <button
+                      onClick={() =>
+                        user.followedBy.length > 0
+                          ? unfollowUser.mutate({
+                              followingUserId: user.id,
+                            })
+                          : followUser.mutate({
+                              followingUserId: user.id,
+                            })
+                      }
+                      className="flex items-center space-x-3 rounded border
+                       border-gray-400/50 px-4  py-2 transition hover:border-gray-900
+                        hover:text-gray-900"
+                    >
+                      {user.followedBy.length > 0 ? "Unfollow" : "Follow"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            {isFollowModalOpen.modalType === " followings" &&
+              followings.data?.followings.map((user) => (
+                <div className="flex w-full flex-col justify-center">
+                  <h3 className="my-2 p-2 text-xl">Following</h3>
+                  <div
+                    key={user.id}
+                    className="my-1 flex w-full items-center justify-between rounded-xl bg-gray-200 px-5 py-2 "
+                  >
+                    <div>{user.name}</div>
+                    <button
+                      onClick={() =>
+                        unfollowUser.mutate({
+                          followingUserId: user.id,
+                        })
+                      }
+                      className="flex items-center space-x-3 rounded border border-gray-400 px-4  py-2.5 transition hover:border-gray-900 hover:text-gray-900"
+                    >
+                      Unfollow
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </Modal>
+      )}
       <div className="flex h-full w-full items-center justify-center">
         <div className="my-10 h-full w-full flex-col items-center justify-center lg:max-w-screen-md xl:max-w-screen-lg">
           <div className="flex w-full flex-col rounded-3xl bg-white shadow-md">
@@ -136,19 +241,71 @@ function UserProfilePage() {
               <div className="text-gray-600">
                 {userProfile.data?._count.posts ?? 0} Posts
               </div>
-              <div>
+              <div className="flex space-x-4 text-gray-700">
+                <button
+                  onClick={() =>
+                    setIsFollowModalOpen({
+                      isOpen: true,
+                      modalType: "followers",
+                    })
+                  }
+                  className="text-gray-700 hover:text-gray-900"
+                >
+                  <span className="text-gray-900">
+                    {userProfile.data?._count.followedBy}
+                  </span>{" "}
+                  Followers
+                </button>
+                <button
+                  onClick={() =>
+                    setIsFollowModalOpen({
+                      isOpen: true,
+                      modalType: "followings",
+                    })
+                  }
+                  className="text-gray-700 hover:text-gray-900"
+                >
+                  <span className="text-gray-900">
+                    {userProfile.data?._count.followings}
+                  </span>{" "}
+                  Followings
+                </button>
+              </div>
+              <div className=" flex w-full items-center space-x-4">
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
                     toast.success("URL copied to clipboard 🥳");
                   }}
-                  className="flex transform items-center space-x-3 rounded border border-gray-200 px-4 py-2.5  transition hover:border-gray-900  hover:text-gray-900 active:scale-95"
+                  className="mt-2 flex transform items-center space-x-3 rounded border border-gray-200 px-4 py-2.5  transition hover:border-gray-900  hover:text-gray-900 active:scale-95"
                 >
                   <div>Share</div>
                   <div>
                     <SlShareAlt />
                   </div>
                 </button>
+                {userProfile.isSuccess && userProfile.data?.followedBy && (
+                  <button
+                    onClick={() => {
+                      if (userProfile.data?.id) {
+                        userProfile.data.followedBy.length > 0
+                          ? unfollowUser.mutate({
+                              followingUserId: userProfile.data.id,
+                            })
+                          : followUser.mutate({
+                              followingUserId: userProfile.data.id,
+                            });
+                      }
+                    }}
+                    className="mt-2 flex items-center space-x-3 rounded border
+                       border-gray-400/50 px-4  py-2 transition hover:border-gray-900
+                        hover:text-gray-900"
+                  >
+                    {userProfile.data?.followedBy.length > 0
+                      ? "Unfollow"
+                      : "Follow"}
+                  </button>
+                )}
               </div>
             </div>
           </div>
