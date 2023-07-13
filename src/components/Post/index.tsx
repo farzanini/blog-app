@@ -68,7 +68,16 @@ function Post({ ...post }: PostProps) {
           </p>
         </div>
         <div className="col-span-4">
-          <div className="h-full w-full transform rounded-xl  bg-gray-500 transition duration-300 hover:scale-105 hover:shadow-xl"></div>
+          <div className="h-full w-full transform rounded-xl  bg-gray-500 transition duration-300 hover:scale-105 hover:shadow-xl">
+            {post.featuredImage && (
+              <Image
+                src={post.featuredImage}
+                alt={post.title}
+                fill
+                className="rounded-xl"
+              />
+            )}
+          </div>
         </div>
       </Link>
       <div>
