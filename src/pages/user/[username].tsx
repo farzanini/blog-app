@@ -9,8 +9,6 @@ import toast from "react-hot-toast";
 import Post from "../../components/Post";
 import { useSession } from "next-auth/react";
 
-import { createClient } from "@supabase/supabase-js";
-import { env } from "../../env/client.mjs";
 import Modal from "../../components/Modal";
 
 function UserProfilePage() {

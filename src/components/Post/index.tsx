@@ -17,7 +17,6 @@ const Post = ({
   tags,
   id,
   bookmarks,
-  likes,
 }: PostProps) => {
   const [isBookmarked, setIsBookmarked] = useState(bookmarks?.length > 0);
 
