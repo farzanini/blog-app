@@ -11,6 +11,7 @@
 # database
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
+/supabase
 
 # next.js
 /.next/
@@ -40,3 +41,5 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+.vercel

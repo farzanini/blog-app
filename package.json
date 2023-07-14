@@ -20,6 +20,7 @@
     "@trpc/next": "^10.0.0",
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
+    "@vercel/postgres": "^0.4.0",
     "base64-arraybuffer": "^1.0.2",
     "dayjs": "^1.11.8",
     "interweave": "^13.1.0",
