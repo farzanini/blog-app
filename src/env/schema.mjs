@@ -23,6 +23,8 @@ export const serverSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string(),
   UNSPLEASH_API_ACCESS_KEY: z.string(),
   UNSPLEASH_API_SECRET_KEY: z.string(),
+  GITHUB_ID: z.string(),
+  GITHUB_SECRET: z.string(),
 });
 
 /**
