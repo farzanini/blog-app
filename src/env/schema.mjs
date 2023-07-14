@@ -6,7 +6,7 @@ import { z } from "zod";
  * This way you can ensure the app isn't built with invalid env vars.
  */
 export const serverSchema = z.object({
-  // DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
   NEXTAUTH_SECRET:
     process.env.NODE_ENV === "production"
@@ -21,6 +21,8 @@ export const serverSchema = z.object({
   ),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  SUPABASE_PUBLIC_URL: z.string(),
+  SUPABASE_SECRET_KEY: z.string(),
   UNSPLEASH_API_ACCESS_KEY: z.string(),
   UNSPLEASH_API_SECRET_KEY: z.string(),
 });
@@ -30,17 +32,18 @@ export const serverSchema = z.object({
  * This way you can ensure the app isn't built with invalid env vars.
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
-// export const clientSchema = z.object({
-//   NEXT_PUBLIC_SUPABASE_PUBLIC_URL: z.string(),
-//   NEXT_PUBLIC_SUPABASE_PUBLIC_KEY: z.string(),
-// });
+export const clientSchema = z.object({
+  NEXT_PUBLIC_SUPABASE_PUBLIC_URL: z.string(),
+  NEXT_PUBLIC_SUPABASE_PUBLIC_KEY: z.string(),
+});
 
 /**
  * You can't destruct `process.env` as a regular object, so you have to do
  * it manually here. This is because Next.js evaluates this at build time,
  * and only used environment variables are included in the build.
+ * @type {{ [k in keyof z.infer<typeof clientSchema>]: z.infer<typeof clientSchema>[k] | undefined }}
  */
-// export const clientEnv = {
-//   NEXT_PUBLIC_SUPABASE_PUBLIC_URL: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_URL,
-//   NEXT_PUBLIC_SUPABASE_PUBLIC_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
-// };
+export const clientEnv = {
+  NEXT_PUBLIC_SUPABASE_PUBLIC_URL: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_URL,
+  NEXT_PUBLIC_SUPABASE_PUBLIC_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY,
+};
