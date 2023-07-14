@@ -4,6 +4,8 @@ import { publicProcedure, protectedProcedure, router } from "../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
+const LIMIT = 2;
+
 export const postRouter = router({
   createPost: protectedProcedure
     .input(
@@ -22,13 +24,14 @@ export const postRouter = router({
     .mutation(
       async ({
         ctx: { prisma, session },
-        input: { title, description, text, tagsIds },
+        input: { title, description, text, tagsIds, html },
       }) => {
         await prisma.post.create({
           data: {
             title,
             description,
             text,
+            html,
             slug: slugify(title),
             author: {
               connect: {
@@ -75,44 +78,59 @@ export const postRouter = router({
       }
     ),
 
-  getPosts: publicProcedure.query(async ({ ctx: { prisma, session } }) => {
-    const posts = await prisma.post.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        description: true,
-        createdAt: true,
-        featuredImage: true,
-        author: {
-          select: {
-            name: true,
-            image: true,
-            username: true,
+  getPosts: publicProcedure
+    .input(
+      z.object({
+        cursor: z.string().nullish(),
+      })
+    )
+    .query(async ({ ctx: { prisma, session }, input: { cursor } }) => {
+      const posts = await prisma.post.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          description: true,
+          createdAt: true,
+          featuredImage: true,
+          author: {
+            select: {
+              name: true,
+              image: true,
+              username: true,
+            },
+          },
+          bookmarks: session?.user?.id
+            ? {
+                where: {
+                  userId: session?.user?.id,
+                },
+              }
+            : false,
+          tags: {
+            select: {
+              name: true,
+              id: true,
+              slug: true,
+            },
           },
         },
-        bookmarks: session?.user?.id
-          ? {
-              where: {
-                userId: session?.user?.id,
-              },
-            }
-          : false,
-        tags: {
-          select: {
-            name: true,
-            id: true,
-            slug: true,
-          },
-        },
-      },
-      take: 10,
-    });
-    return posts;
-  }),
+        cursor: cursor ? { id: cursor } : undefined,
+        take: LIMIT + 1,
+      });
+
+      let nextCursor: typeof cursor | undefined = undefined;
+
+      if (posts.length > LIMIT) {
+        const nextItem = posts.pop();
+        if (nextItem) nextCursor = nextItem.id;
+      }
+
+      return { posts, nextCursor };
+    }),
 
   getPost: publicProcedure
     .input(
@@ -130,6 +148,7 @@ export const postRouter = router({
           description: true,
           title: true,
           text: true,
+          html: true,
           likes: session?.user?.id
             ? {
                 where: {
