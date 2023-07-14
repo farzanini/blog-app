@@ -301,7 +301,7 @@ export const userRouter = router({
         userId: z.string(),
       })
     )
-    .query(async ({ ctx: { prisma, session }, input: { userId } }) => {
+    .query(async ({ ctx: { prisma }, input: { userId } }) => {
       return await prisma.user.findUnique({
         where: {
           id: userId,

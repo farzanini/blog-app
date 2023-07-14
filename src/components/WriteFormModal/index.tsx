@@ -25,10 +25,10 @@ type WriteFormType = {
 };
 
 export const writeFormSchema = z.object({
-  title: z.string().min(20),
-  description: z.string().min(60),
-  text: z.string().min(100).optional(),
-  html: z.string().min(100),
+  title: z.string().min(20).max(40),
+  description: z.string().min(95).max(200),
+  text: z.string().min(80),
+  html: z.string().min(80),
 });
 
 const WriteFormModal = () => {

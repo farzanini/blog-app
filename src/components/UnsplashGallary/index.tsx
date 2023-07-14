@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import Modal from "../Modal";
 import Image from "next/image";
-import toast, { LoaderIcon } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { trpc } from "../../utils/trpc";
 import useDebounce from "../../hooks/useDebounce";
 import { zodResolver } from "@hookform/resolvers/zod";

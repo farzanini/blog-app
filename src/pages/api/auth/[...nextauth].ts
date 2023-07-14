@@ -24,7 +24,6 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       profile(profile) {
-        const givenName = profile.name ?? "";
         return {
           id: profile.sub,
           name: profile.name,

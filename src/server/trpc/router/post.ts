@@ -81,14 +81,12 @@ export const postRouter = router({
   getPosts: publicProcedure
     .input(
       z.object({
+        userId: z.string().optional(),
         cursor: z.string().nullish(),
       })
     )
-    .query(async ({ ctx: { prisma, session }, input: { cursor } }) => {
+    .query(async ({ ctx: { prisma }, input: { userId, cursor } }) => {
       const posts = await prisma.post.findMany({
-        orderBy: {
-          createdAt: "desc",
-        },
         select: {
           id: true,
           slug: true,
@@ -103,23 +101,42 @@ export const postRouter = router({
               username: true,
             },
           },
-          bookmarks: session?.user?.id
+          bookmarks: userId
             ? {
                 where: {
-                  userId: session?.user?.id,
+                  userId,
                 },
               }
             : false,
-          tags: {
+          _count: {
             select: {
-              name: true,
-              id: true,
-              slug: true,
+              bookmarks: true,
+              comments: true,
+              likes: true,
             },
           },
+          tags: true,
+          // {
+          //   select: {
+          //     name: true,
+          //     id: true,
+          //     slug: true,
+          //   },
+          // }
+          likes: userId
+            ? {
+                where: {
+                  userId,
+                },
+              }
+            : false,
         },
-        cursor: cursor ? { id: cursor } : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+
         take: LIMIT + 1,
+        cursor: cursor ? { id: cursor } : undefined,
       });
 
       let nextCursor: typeof cursor | undefined = undefined;
@@ -129,7 +146,7 @@ export const postRouter = router({
         if (nextItem) nextCursor = nextItem.id;
       }
 
-      return { posts, nextCursor };
+      return { posts, nextCursor: nextCursor };
     }),
 
   getPost: publicProcedure

@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import slugify from "slugify";
 import { TRPCError } from "@trpc/server";

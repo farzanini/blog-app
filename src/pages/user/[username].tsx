@@ -13,12 +13,6 @@ import { createClient } from "@supabase/supabase-js";
 import { env } from "../../env/client.mjs";
 import Modal from "../../components/Modal";
 
-// Create a single supabase client for interacting with your database
-const supabase = createClient(
-  env.NEXT_PUBLIC_SUPABASE_PUBLIC_URL,
-  env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
-);
-
 function UserProfilePage() {
   const router = useRouter();
 
@@ -41,7 +35,6 @@ function UserProfilePage() {
     }
   );
 
-  const [file, setFile] = useState<File | null>(null);
   const [objectImage, setObjectImage] = useState("");
 
   const userRoute = trpc.useContext().user;
@@ -137,7 +130,10 @@ function UserProfilePage() {
           <div className="flex w-full max-w-lg flex-col items-center justify-center space-y-4">
             {isFollowModalOpen.modalType === "followers" &&
               followers.data?.followedBy.map((user) => (
-                <div className="flex w-full flex-col justify-center">
+                <div
+                  className="flex w-full flex-col justify-center"
+                  key={user.id}
+                >
                   <h3 className="my-2 p-2 text-xl">Followers</h3>
                   <div
                     key={user.id}
@@ -165,7 +161,10 @@ function UserProfilePage() {
               ))}
             {isFollowModalOpen.modalType === " followings" &&
               followings.data?.followings.map((user) => (
-                <div className="flex w-full flex-col justify-center">
+                <div
+                  className="flex w-full flex-col justify-center"
+                  key={user.id}
+                >
                   <h3 className="my-2 p-2 text-xl">Following</h3>
                   <div
                     key={user.id}
