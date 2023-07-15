@@ -20,14 +20,12 @@ export type TAG = { id: string; name: string };
 type WriteFormType = {
   title: string;
   description: string;
-  text: string;
   html: string;
 };
 
 export const writeFormSchema = z.object({
   title: z.string().min(20),
   description: z.string().min(95),
-  text: z.string().min(80),
   html: z.string().min(80),
 });
 
@@ -166,7 +164,7 @@ const WriteFormModal = () => {
           )}
         />
         <p className="w-full pb-2 text-left text-sm text-red-500">
-          {errors.text?.message}
+          {errors.html?.message}
         </p>
         <div className="flex justify-end">
           <button
