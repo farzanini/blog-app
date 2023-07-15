@@ -5,9 +5,11 @@ import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 import { env } from "../../../env/server.mjs";
-import { prisma } from "../../../server/db/client";
+// import { prisma } from "../../../server/db/client";
+import { PrismaClient } from '@prisma/client'
 import { generateUsername } from "../../../utils/generateUsername";
 
+const prisma = new PrismaClient()
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {

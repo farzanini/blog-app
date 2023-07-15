@@ -15,6 +15,8 @@ const MainSection = () => {
     }
   );
 
+  const { data: tags } = trpc.tag.getTags.useQuery();
+
   return (
     <main className="col-span-8 h-full w-full border-r border-gray-300 px-24">
       <div className="flex w-full flex-col space-y-4 py-10 ">
@@ -23,7 +25,7 @@ const MainSection = () => {
             htmlFor="search"
             className="relative w-full rounded-3xl border border-gray-800"
           >
-            <div className="absolute left-2 flex h-full w-full w-max items-center">
+            <div className="absolute left-2 flex h-full w-max items-center">
               <CiSearch />
             </div>
             <input
@@ -35,18 +37,17 @@ const MainSection = () => {
             />
           </label>
 
-          <div className="flex w-full items-center justify-end space-x-4">
+          {/* <div className="flex w-full items-center justify-end space-x-4">
             <div>My Topics:</div>
             <div className="flex items-center space-x-2">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-3xl bg-gray-200/50 p-4">
-                  tag {i}
-                </div>
-              ))}
+                          {tags &&
+              tags
+                .slice(0, 4)
+                .map((tag) => <Tag name={tag.name} key={tag.id} />)}
             </div>
-          </div>
+          </div> */}
         </div>
-        <div className="flex w-full items-center justify-between border-b border-gray-300 pb-8">
+        {/* <div className="flex w-full items-center justify-between border-b border-gray-300 pb-8">
           <div>Articles</div>
           <div>
             <button className="flex items-center space-x-2 rounded-3xl border border-gray-800 px-4 py-1.5 font-semibold">
@@ -56,7 +57,7 @@ const MainSection = () => {
               </div>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="flex  w-full flex-col justify-center space-y-8">
         {getPosts.isLoading && (

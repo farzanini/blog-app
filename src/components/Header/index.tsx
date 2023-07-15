@@ -16,7 +16,9 @@ const Header = () => {
       <div>
         <IoReorderThreeOutline className="text-2xl text-gray-600" />
       </div>
-      <Link href={'/'} className="text-xl font-thin select-none cursor-pointer">Ultimate Blog App</Link>
+      <Link href={"/"} className="cursor-pointer select-none text-xl font-thin">
+        Blog App with T3 stack
+      </Link>
       {status === "authenticated" ? (
         <div className="flex items-center space-x-4">
           <div>
