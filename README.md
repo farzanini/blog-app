@@ -1,28 +1,31 @@
-# Create T3 App
+# Project Title
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## Description
 
-## What's next? How do I make an app with this?
+The Blog App is a feature-rich T3 stack application that empowers users to express themselves through text, images, and interactions with other bloggers. With a robust set of functionalities, users can sign in, post their thoughts, tag their content, like and comment on other posts, bookmark articles, review their bookmarks, follow other users, and receive personalized recommendations based on their interests and interactions.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Key Features
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- **User Authentication:** Secure user registration and login system to protect user data and ensure privacy.
+- **Create and Publish Posts:** Users can effortlessly compose and publish their blog posts, including text and images retrieved via the Unsplash API.
+- **Tagging System:** Users can categorize their posts by adding tags, making it easier for readers to discover related content.
+- **Like and Comment:** The app enables users to interact with other posts by liking and leaving comments, fostering engagement and community building.
+- **Bookmark Management:** Users can bookmark posts they find interesting and review their saved content later.
+- **Follow Other Users:** Users can follow each other to stay updated on the latest posts from their favorite bloggers.
+- **Personalized Recommendations:** The app utilizes advanced algorithms to recommend other bloggers and content based on users' interests, liked posts, and tags.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Technologies Used
 
-## Learn More
+- Frontend: React.js, Next.js, Tailwind CSS
+- Backend: Next.js (API routes), tRPC for type-safe API
+- Database: Postgres (managed by Prisma ORM)
+- Authentication: NextAuth,
+- Image Integration: Unsplash API, 
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Outcome
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+By leveraging the power of Prisma, Next.js, tRPC, and React.js, the Blog App offers a seamless user experience, type-safe API interactions, and efficient data handling. Its intuitive design and rich feature set make it an ideal platform for bloggers to connect, share ideas, and discover new perspectives.
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Live Demo
 
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+See the live demo of the project [here](https://blog-app-farzanhosseini.vercel.app/).
