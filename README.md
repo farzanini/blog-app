@@ -1,4 +1,4 @@
-# Project Title
+# Blog App
 
 ## Description
 
