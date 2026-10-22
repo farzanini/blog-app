@@ -1,31 +1,47 @@
 # Blog App
 
-## Description
+A full-stack blogging application by [Farzan Hosseini](https://github.com/farzanini), an AI and software engineer.
 
-The Blog App is a feature-rich T3 stack application that empowers users to express themselves through text, images, and interactions with other bloggers. With a robust set of functionalities, users can sign in, post their thoughts, tag their content, like and comment on other posts, bookmark articles, review their bookmarks, follow other users, and receive personalized recommendations based on their interests and interactions.
+## Features
 
-## Key Features
+- Sign in with Google or GitHub.
+- Create posts with tags and featured images selected through Unsplash search.
+- Browse posts and author profiles.
+- Like, comment on, and bookmark posts; view a reading list.
+- Follow authors and view follower and following lists.
+- Upload a profile avatar to Supabase Storage.
 
-- **User Authentication:** Secure user registration and login system to protect user data and ensure privacy.
-- **Create and Publish Posts:** Users can effortlessly compose and publish their blog posts, including text and images retrieved via the Unsplash API.
-- **Tagging System:** Users can categorize their posts by adding tags, making it easier for readers to discover related content.
-- **Like and Comment:** The app enables users to interact with other posts by liking and leaving comments, fostering engagement and community building.
-- **Bookmark Management:** Users can bookmark posts they find interesting and review their saved content later.
-- **Follow Other Users:** Users can follow each other to stay updated on the latest posts from their favorite bloggers.
-- **Personalized Recommendations:** The app utilizes advanced algorithms to recommend other bloggers and content based on users' interests, liked posts, and tags.
+## Tech stack
 
-## Technologies Used
+- Next.js 13 with React 18 and TypeScript
+- Tailwind CSS
+- tRPC and TanStack React Query
+- Prisma with PostgreSQL
+- NextAuth.js
+- Supabase Storage and the Unsplash API
 
-- Frontend: React.js, Next.js, Tailwind CSS
-- Backend: Next.js (API routes), tRPC for type-safe API
-- Database: Postgres (managed by Prisma ORM)
-- Authentication: NextAuth,
-- Image Integration: Unsplash API, 
+## Getting started
 
-## Outcome
+Requirements: Node.js and npm. Configure the environment variables declared in `src/env/schema.mjs` before running the app. The project expects database, authentication provider, Unsplash, and Supabase settings.
 
-By leveraging the power of Prisma, Next.js, tRPC, and React.js, the Blog App offers a seamless user experience, type-safe API interactions, and efficient data handling. Its intuitive design and rich feature set make it an ideal platform for bloggers to connect, share ideas, and discover new perspectives.
+```bash
+npm install
+npm run dev
+```
 
-## Live Demo
+Open the local URL printed by Next.js. `npm install` runs Prisma Client generation through the `postinstall` script. For a production build and start, run:
 
-See the live demo of the project [here](https://blog-app-farzanhosseini.vercel.app/).
+```bash
+npm run build
+npm run start
+```
+
+## Project structure
+
+```text
+prisma/             Prisma schema
+src/components/     UI components
+src/pages/          Next.js pages and API routes
+src/server/trpc/    tRPC setup and routers
+src/env/            Environment variable schemas
+```
